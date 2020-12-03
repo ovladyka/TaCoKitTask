@@ -64,13 +64,18 @@ public class CompanyInputOutput implements Serializable {
 
         final Schema schema = defaultInput.getSchema();
 
-        List<Schema.Entry> entriesList = schema.getEntries();
         List<String> stringList = new ArrayList<>();
+
+        schema.getEntries().stream().filter(entry -> entry.getType()== Schema.Type.STRING)
+        .forEach(entry -> stringList.add(defaultInput.getString(entry.getName())));
+
+        /*List<Schema.Entry> entriesList = schema.getEntries();
+
 
         for (Schema.Entry entry: entriesList) {
             stringList.add(defaultInput.getString(entry.getName()));
         }
-
+*/
         String[] arr = new String[stringList.size()];
 
         stringList.toArray(arr);
