@@ -26,7 +26,8 @@ import org.talend.sdk.component.api.record.Record;
 import com.company.talend.components.service.CompanyComponentService;
 import org.talend.sdk.component.api.record.Schema;
 
-@Version(1) // default version is 1, if some configuration changes happen between 2 versions you can add a migrationHandler
+@Version(1)
+// default version is 1, if some configuration changes happen between 2 versions you can add a migrationHandler
 @Icon(value = CUSTOM, custom = "CompanyOutput") // icon is located at src/main/resources/icons/CompanyOutput.svg
 @Processor(name = "CompanyOutput")
 @Documentation("TODO fill the documentation for this processor")
@@ -34,6 +35,7 @@ public class CompanyInputOutput implements Serializable {
     private final CompanyInputOutputConfiguration configuration;
     private final CompanyComponentService service;
     private CSVWriter csvWriter;
+    private boolean isHeader;
 
     public CompanyInputOutput(@Option("configuration") final CompanyInputOutputConfiguration configuration,
                               final CompanyComponentService service) {
@@ -43,8 +45,7 @@ public class CompanyInputOutput implements Serializable {
 
     @PostConstruct
     public void init() throws IOException {
-        csvWriter = new CSVWriter(new FileWriter(configuration.getDataset().getFilePath()
-                + configuration.getDataset().getFilename()));
+        csvWriter = new CSVWriter(new FileWriter(configuration.getDataset().getFilePath()));
 
         // this method will be executed once for the whole component execution,
         // this is where you can establish a connection for instance
@@ -72,11 +73,16 @@ public class CompanyInputOutput implements Serializable {
         String[] arr = new String[objectList.size()];
 
         for (int i = 0; i < objectList.size(); i++) {
+
+            if (configuration.getDataset().getHeader().isEmpty() && !isHeader){
+                isHeader = true;
+                break;
+            }
+
             arr[i] = objectList.get(i).toString();
+
         }
-
         csvWriter.writeNext(arr);
-
 
         // this is the method allowing you to handle the input(s) and emit the output(s)
         // after some custom logic you put here, to send a value to next element you can use an
