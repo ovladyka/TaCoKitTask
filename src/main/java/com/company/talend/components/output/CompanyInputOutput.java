@@ -65,21 +65,19 @@ public class CompanyInputOutput implements Serializable {
 
         final Schema schema = defaultInput.getSchema();
 
-        List<Object> objectList = new ArrayList<>();
+        List<String> objectList = new ArrayList<>();
 
         schema.getEntries()
-                .forEach(entry -> objectList.add(defaultInput.get(Object.class, entry.getName())));
+                .forEach(entry -> objectList.add(defaultInput.getString(entry.getName())));
 
         String[] arr = new String[objectList.size()];
+        objectList.toArray(arr);
 
-        for (int i = 0; i < objectList.size(); i++) {
-
-            if (!configuration.getDataset().getHeader() && !isHeader){
-                isHeader = true;
-                break;
-            }
-            arr[i] = objectList.get(i).toString();
+        if (!configuration.getDataset().getHeader() && !isHeader) {
+            isHeader = true;
+            arr = null;
         }
+
         csvWriter.writeNext(arr);
 
         // this is the method allowing you to handle the input(s) and emit the output(s)
