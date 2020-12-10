@@ -45,8 +45,12 @@ public class CompanyInputOutput implements Serializable {
 
     @PostConstruct
     public void init() throws IOException {
-        csvWriter = new CSVWriter(new FileWriter(configuration.getDataset().getFilePath()));
 
+        if (configuration.getAppend()) {
+            csvWriter = new CSVWriter(new FileWriter(configuration.getDataset().getFilePath(),true));
+        } else {
+            csvWriter = new CSVWriter(new FileWriter(configuration.getDataset().getFilePath()));
+        }
         // this method will be executed once for the whole component execution,
         // this is where you can establish a connection for instance
         // Note: if you don't need it you can delete it
