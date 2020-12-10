@@ -74,13 +74,11 @@ public class CompanyInputOutput implements Serializable {
 
         for (int i = 0; i < objectList.size(); i++) {
 
-            if (configuration.getDataset().getHeader().isEmpty() && !isHeader){
+            if (!configuration.getDataset().getHeader() && !isHeader){
                 isHeader = true;
                 break;
             }
-
             arr[i] = objectList.get(i).toString();
-
         }
         csvWriter.writeNext(arr);
 

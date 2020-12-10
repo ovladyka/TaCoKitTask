@@ -15,7 +15,6 @@ import org.talend.sdk.component.api.meta.Documentation;
     // customize it as much as needed
     @GridLayout.Row({ "datastore" }),
     @GridLayout.Row({ "FilePath" }),
-    @GridLayout.Row({ "Filename" }),
     @GridLayout.Row({ "RowSeparator" }),
     @GridLayout.Row({ "FieldSeparator" }),
     @GridLayout.Row({ "SkipEmptyRows" }),
@@ -34,10 +33,6 @@ public class MyDataset implements Serializable {
 
     @Option
     @Documentation("TODO fill the documentation for this parameter")
-    private String Filename;
-
-    @Option
-    @Documentation("TODO fill the documentation for this parameter")
     private String RowSeparator;
 
     @Option
@@ -50,7 +45,7 @@ public class MyDataset implements Serializable {
 
     @Option
     @Documentation("TODO fill the documentation for this parameter")
-    private String Header;
+    private boolean Header;
 
     @Option
     @Documentation("TODO fill the documentation for this parameter")
@@ -71,15 +66,6 @@ public class MyDataset implements Serializable {
 
     public MyDataset setFilePath(String FilePath) {
         this.FilePath = FilePath;
-        return this;
-    }
-
-    public String getFilename() {
-        return Filename;
-    }
-
-    public MyDataset setFilename(String Filename) {
-        this.Filename = Filename;
         return this;
     }
 
@@ -110,11 +96,11 @@ public class MyDataset implements Serializable {
         return this;
     }
 
-    public String getHeader() {
+    public boolean getHeader() {
         return Header;
     }
 
-    public MyDataset setHeader(String Header) {
+    public MyDataset setHeader(boolean Header) {
         this.Header = Header;
         return this;
     }
