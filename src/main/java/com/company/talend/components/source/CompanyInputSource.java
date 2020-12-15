@@ -1,9 +1,9 @@
 package com.company.talend.components.source;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
@@ -27,8 +27,9 @@ public class CompanyInputSource implements Serializable {
     private final CompanyComponentService service;
     private final RecordBuilderFactory builderFactory;
     private CSVReader csvReader;
-    private String next;
     private Record.Builder builder;
+    private boolean isHeader;
+    private String[] headerArr;
 
     public CompanyInputSource(@Option("configuration") final CompanyInputMapperConfiguration configuration,
                               final CompanyComponentService service,
@@ -39,11 +40,16 @@ public class CompanyInputSource implements Serializable {
     }
 
     @PostConstruct
-    public void init() throws FileNotFoundException {
-        csvReader = new CSVReader(new FileReader(configuration.getDataset().getFilePath()
-                + configuration.getDataset().getFilename()));
+    public void init() throws IOException, CsvValidationException {
+        csvReader = new CSVReader(new FileReader(configuration.getDataset().getFilePath()));
 
         builder = builderFactory.newRecordBuilder();
+
+        isHeader = configuration.getDataset().getHeader();
+
+        if (isHeader) {
+            headerArr = Arrays.stream(csvReader.readNext()).toArray(String[]::new);
+        }
         // this method will be executed once for the whole component execution,
         // this is where you can establish a connection for instance
     }
@@ -57,8 +63,14 @@ public class CompanyInputSource implements Serializable {
             return null;
         }
 
-        for (int i = 0; i < strArr.length; i++) {
-            builder.withString("col" + i, strArr[i]);
+        if (isHeader && headerArr != null) {
+            for (int i = 0; i < strArr.length; i++) {
+                builder.withString(headerArr[i], strArr[i]);
+            }
+        } else {
+            for (int i = 0; i < strArr.length; i++) {
+                builder.withString("col" + i, strArr[i]);
+            }
         }
 
         return builder.build();
